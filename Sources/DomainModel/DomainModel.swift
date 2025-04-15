@@ -12,8 +12,8 @@ public struct Money {
     let amount : Int
     let currency : String
     
-    let acceptedCurrencies = ["USD", "GBP", "EUR", "CAN"]
-    let exchangeRate = ["USD": 1,
+    private let acceptedCurrencies = ["USD", "GBP", "EUR", "CAN"]
+    private let exchangeRate = ["USD": 1,
                         "GBP": 0.5,
                         "EUR": 1.5,
                         "CAN": 1.25]
@@ -81,22 +81,48 @@ public class Job {
     func raise(byAmount: Double) {
         switch type {
         case .Hourly(let double):
-            let newSalary = double + byAmount
-            type = .Hourly(newSalary)
+            if byAmount < 0 {
+                print("Raises should be a positive number! Salary is unchanged!")
+            } else {
+                let newSalary = double + byAmount
+                type = .Hourly(newSalary)
+            }
         case .Salary(let uInt):
-            let newSalary = Double(uInt) + byAmount
-            type = .Salary(UInt(newSalary))
+            if byAmount < 0 {
+                print("Raises should be a positive number! Salary is unchanged!")
+            } else {
+                let newSalary = Double(uInt) + byAmount
+                type = .Salary(UInt(newSalary))
+            }
         }
     }
     
     func raise(byPercent: Double) {
         switch type {
         case .Hourly(let double):
-            let newSalary = double * (1 + byPercent)
-            type = .Hourly(newSalary)
+            if byPercent < 0 {
+                print("Raises should be a positive percentage! Salary is unchanged!")
+            } else {
+                let newSalary = double * (1 + byPercent)
+                type = .Hourly(newSalary)
+            }
         case .Salary(let uInt):
-            let newSalary = Double(uInt) * (1 + byPercent)
-            type = .Salary(UInt(newSalary))
+            if byPercent < 0 {
+                print("Raises should be a positive percentage! Salary is unchanged!")
+            } else {
+                let newSalary = Double(uInt) * (1 + byPercent)
+                type = .Salary(UInt(newSalary))
+            }
+        }
+    }
+    
+    func convert() {
+        switch type {
+        case .Hourly(let double):
+            let salary = 2000*double
+            type = .Salary(UInt((salary / 1000).rounded() * 1000))
+        case .Salary(_):
+            print("This job is already a salaried position.")
         }
     }
 }
@@ -105,8 +131,8 @@ public class Job {
 // Person
 //
 public class Person {
-    let firstName : String
-    let lastName : String
+    let firstName : String?
+    let lastName : String?
     let age : Int
     var job : Job? {
         didSet {
@@ -123,7 +149,10 @@ public class Person {
         }
     }
     
-    init(firstName: String, lastName: String, age: Int, job: Job? = nil, spouse: Person? = nil) {
+    init(firstName: String? = nil, lastName: String? = nil, age: Int, job: Job? = nil, spouse: Person? = nil) {
+        guard firstName != nil || lastName != nil else {
+            fatalError("Person name must contain at least a first name or last name")
+        }
         self.firstName = firstName
         self.lastName = lastName
         self.age = age
@@ -132,7 +161,7 @@ public class Person {
     }
     
     func toString() -> String {
-        return "[Person: firstName:\(firstName) lastName:\(lastName) age:\(age) job:\(String(describing: job)) spouse:\(String(describing: spouse))]"
+        return "[Person: firstName:\(firstName ?? "") lastName:\(lastName ?? "") age:\(age) job:\(String(describing: job)) spouse:\(String(describing: spouse))]"
     }
 }
 

@@ -80,6 +80,19 @@ class MoneyTests: XCTestCase {
     XCTAssert(total.amount == 10)
     XCTAssert(total.currency == "GBP")
   }
+    
+//  --- MY TESTS ---
+    func testSubtractUSDtoUSD() {
+        let total = tenUSD.subtract(tenUSD)
+        XCTAssert(total.amount == 0)
+        XCTAssert(total.currency == "USD")
+    }
+    
+    func testSubtractUSDtoGBP() {
+        let total = tenUSD.subtract(fiveGBP)
+        XCTAssert(total.amount == 0)
+        XCTAssert(total.currency == "GBP")
+    }
 
     static var allTests = [
         ("testCanICreateMoney", testCanICreateMoney),
@@ -96,6 +109,9 @@ class MoneyTests: XCTestCase {
         
         ("testAddUSDtoUSD", testAddUSDtoUSD),
         ("testAddUSDtoGBP", testAddUSDtoGBP),
+        
+        ("testSubtractUSDtoUSD", testSubtractUSDtoUSD),
+        ("testSubtractUSDtoGBP", testSubtractUSDtoGBP),
     ]
 }
 
